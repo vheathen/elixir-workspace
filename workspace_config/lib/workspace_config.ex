@@ -146,10 +146,25 @@ defmodule WorkspaceConfig do
   end
 
   defp fetch_project_config(absolute_dir_path) do
-    in_project(absolute_dir_path, fn _module ->
-      Mix.Project.config()
-    end)
+    project_name = absolute_dir_path |> Path.basename() |> Macro.camelize()
+    mix_path = Path.join([absolute_dir_path, "mix.exs"])
+
+    [{mix_module, _}] =
+      mix_path
+      |> File.read!()
+      |> String.replace("use Mix.Project", "")
+      |> String.replace(~r/defmodule .* do/, "defmodule #{project_name} do")
+      |> String.replace("__DIR__", ~s("#{absolute_dir_path}"))
+      |> Code.compile_string()
+
+    mix_module.project()
   end
+
+  # defp fetch_project_config(absolute_dir_path) do
+  #   in_project(absolute_dir_path, fn _module ->
+  #     Mix.Project.config()
+  #   end)
+  # end
 
   defp workspace_mix_project?(mix_project_config) do
     mix_project_config

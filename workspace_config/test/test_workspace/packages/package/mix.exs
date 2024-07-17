@@ -12,7 +12,7 @@ defmodule Package.MixProject do
   @deps_path WorkspaceConfig.deps_path()
   @build_path WorkspaceConfig.build_path()
   @lockfile WorkspaceConfig.lockfile()
-  @my_weird_artifacts  WorkspaceConfig.append_to_artifacts_path("child_directory")
+  @my_weird_artifacts WorkspaceConfig.append_to_artifacts_path("child_directory")
 
   def project do
     [
